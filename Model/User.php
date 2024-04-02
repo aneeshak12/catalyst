@@ -20,6 +20,10 @@ class User
     public function insert(array $data)
     {
         try {
+            if (!$this->existTable()) {
+                die("Table {$this->tableName} not found. Please run script with options --create_table.");
+            }
+
             $sql = "INSERT INTO {$this->tableName} (name, surname, email) VALUES (?, ?, ?) 
                 ON DUPLICATE KEY UPDATE name = VALUES(name), surname = VALUES(surname)";
             $stmt = $this->conn->prepare($sql);
@@ -44,5 +48,13 @@ class User
         } catch (Exception $exception) {
             die($exception->getMessage());
         }
+    }
+
+    public function existTable(): bool
+    {
+        $existQuery = "SHOW TABLES LIKE '{$this->tableName}'";
+        $result = $this->conn->query($existQuery);
+
+        return $result->num_rows > 0;
     }
 }
