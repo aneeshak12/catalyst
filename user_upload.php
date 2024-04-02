@@ -9,6 +9,11 @@ require_once __DIR__ . '/Connection/MysqlConnection.php';
 require_once __DIR__ . '/Model/User.php';
 
 $options = getopt("u:p:h:", ["file:", "create_table", "dry_run", "help"]);
+if (isset($options["help"])) {
+    echo include('help.php');
+    exit; 
+}
+
 validateArguments($options);
 
 $mysql = new MysqlConnection();
@@ -26,6 +31,10 @@ function commandSwitcher(array $options)
 
 function validateArguments(array $options): void
 {
+    if (isset($options["dry_run"]) && !isset($options["file"])) {
+        die("You need to provide --file 'filepath' as well on --dry_run options");
+    }
+
     if (isset($options["file"]) && !is_file($options["file"])) {
         die("Please input valid data for options '--file'");
     }
