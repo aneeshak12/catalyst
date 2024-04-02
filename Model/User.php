@@ -17,6 +17,19 @@ class User
         $this->conn = MysqlConnection::$conn;
     }
 
+    public function insert(array $data)
+    {
+        try {
+            $sql = "INSERT INTO {$this->tableName} (name, surname, email) VALUES (?, ?, ?) 
+                ON DUPLICATE KEY UPDATE name = VALUES(name), surname = VALUES(surname)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param('sss', $data["name"], $data["surname"], $data["email"]);
+            $stmt->execute();
+        } catch (Exception $exception) {
+            die($exception->getMessage());
+        }
+    }
+
     public function migrate()
     {
         try {
