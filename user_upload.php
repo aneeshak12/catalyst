@@ -4,8 +4,10 @@ namespace TestCli;
 
 use Model\User;
 use TestCli\Connection\MysqlConnection;
+use TestCli\Services\CsvService;
 
 require_once __DIR__ . '/Connection/MysqlConnection.php';
+require_once __DIR__ . '/Services/CsvService.php';
 require_once __DIR__ . '/Model/User.php';
 
 $options = getopt("u:p:h:", ["file:", "create_table", "dry_run", "help"]);
@@ -26,6 +28,12 @@ function commandSwitcher(array $options)
         $user->migrate();
 
         echo "Table users was created sucessfully";
+    }
+    if (isset($options["file"])) {        
+        $csvService = new CsvService();
+        $csvService->parse();
+
+        echo "File imported sucessfully";
     }
 }
 
