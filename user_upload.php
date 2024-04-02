@@ -28,12 +28,14 @@ function commandSwitcher(array $options)
         $user->migrate();
 
         echo "Table users was created sucessfully";
-    }
-    if (isset($options["file"])) {        
+    } elseif (isset($options["file"]) || isset($options["dry_run"])) {
+        $dryRun = isset($options["dry_run"]);
+        $messageKey = isset($options["dry_run"]) ? "parsed" : "imported";
+        
         $csvService = new CsvService();
-        $csvService->parse();
+        $csvService->parse($dryRun);
 
-        echo "File imported sucessfully";
+        echo "File {$messageKey} sucessfully";
     }
 }
 
